@@ -1,0 +1,55 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: server
+  labels:
+    app: server
+  annotations:
+    linkerd.io/inject: enabled
+spec:
+  containers:
+    - name: server
+      image: server
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 4242
+          protocol: TCP
+          name: grpc
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: server
+spec:
+  selector:
+    app: server
+  ports:
+    - port: 8080
+      appProtocol: kubernetes.io/h2c
+      protocol: TCP
+      targetPort: 4242
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GRPCRoute
+metadata:
+  name: server
+  namespace: default
+  annotations:
+    retry.linkerd.io/grpc: unavailable,resource-exhausted
+    retry.linkerd.io/limit: "5"
+spec:
+  parentRefs:
+    - name: server
+      group: ""
+      kind: Service
+      port: 8080
+  rules:
+    - matches:
+        - method:
+            service: connectrpc.eliza.v1.ElizaService
+            method: Say
+            type: Exact
+      backendRefs:
+        - kind: Service
+          name: server
+          port: 8080
