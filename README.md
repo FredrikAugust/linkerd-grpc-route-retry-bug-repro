@@ -1,0 +1,3 @@
+- install Taskfile.dev (https://taskfile.dev/installation/)
+- `task setup`
+- `kubectl logs client`
