@@ -13,6 +13,11 @@ tasks:
     cmds:
       - docker build -t server ./server
 
+  build:server-go:
+    desc: "Build the server-go"
+    cmds:
+      - docker build -t server-go ./server-go
+
   setup:
     desc: "Set up the reproduction"
     preconditions:
@@ -23,6 +28,7 @@ tasks:
     deps:
       - build:client
       - build:server
+      - build:server-go
     cmds:
       - 'echo "Ensure you''re on >= 24.4.4: you''re on $(linkerd version --client | grep -oE ''edge-.+$'')"'
       - k3d cluster create -s 1 linkerd-bug-repro
@@ -30,10 +36,13 @@ tasks:
       - linkerd install --crds | kubectl apply -f -
       - linkerd install | kubectl apply -f -
       - k3d image import -c linkerd-bug-repro server
+      - k3d image import -c linkerd-bug-repro server-go
       - k3d image import -c linkerd-bug-repro client
       - kubectl wait --for=condition=Ready --namespace linkerd --all pod
       - kubectl apply -f k8s/server.yaml
+      - kubectl apply -f k8s/server-go.yaml
       - kubectl apply -f k8s/client.yaml
+      - kubectl apply -f k8s/client-go.yaml
 
   teardown:
     desc: "Teardown the reproduction"

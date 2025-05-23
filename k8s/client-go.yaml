@@ -1,0 +1,14 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: client-go
+  annotations:
+    linkerd.io/inject: enabled
+spec:
+  containers:
+    - name: client
+      image: client
+      imagePullPolicy: Never
+      env:
+        - name: SERVER_HOST
+          value: server-go:8080
