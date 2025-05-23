@@ -8,6 +8,11 @@ tasks:
     cmds:
       - docker build -t client ./client
 
+  build:client-go:
+    desc: "Build the client-go"
+    cmds:
+      - docker build -t client-go ./client-go
+
   build:server:
     desc: "Build the server"
     cmds:
@@ -29,6 +34,7 @@ tasks:
       - build:client
       - build:server
       - build:server-go
+      - build:client-go
     cmds:
       - 'echo "Ensure you''re on >= 24.4.4: you''re on $(linkerd version --client | grep -oE ''edge-.+$'')"'
       - k3d cluster create -s 1 linkerd-bug-repro
@@ -38,6 +44,7 @@ tasks:
       - k3d image import -c linkerd-bug-repro server
       - k3d image import -c linkerd-bug-repro server-go
       - k3d image import -c linkerd-bug-repro client
+      - k3d image import -c linkerd-bug-repro client-go
       - kubectl wait --for=condition=Ready --namespace linkerd --all pod
       - kubectl apply -f k8s/server.yaml
       - kubectl apply -f k8s/server-go.yaml

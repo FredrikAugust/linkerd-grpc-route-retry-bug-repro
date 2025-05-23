@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
     - name: client
-      image: client
+      image: client-go
       imagePullPolicy: Never
       env:
         - name: SERVER_HOST
