@@ -1,3 +1,5 @@
+**Update**: This turned out to be an [actual bug](https://github.com/linkerd/linkerd2/issues/14050) and was solved in [edge-25.6.1](https://github.com/linkerd/linkerd2/releases/tag/edge-25.6.1).
+
 # Reproduction of bug
 
 - Install Taskfile.dev (https://taskfile.dev/installation/)
